@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#0b1626">
+<title>WinPad 11</title>
+<style>
+:root{--accent:#2879c7;--ui-scale:1;--window-radius:16px;--taskbar-alpha:.88}
+.window{border-radius:var(--window-radius)!important;transform-origin:top left}
+#taskbar{background:rgba(18,25,40,var(--taskbar-alpha))}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+:root{--glass:rgba(21,31,48,.88);--line:rgba(255,255,255,.15);--text:#f7f9ff;--muted:#b9c7d9;--blue:#4da3ff;--bg:#0c1c31}
+*{box-sizing:border-box}html,body{height:100%;margin:0;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text);background:#0b1b2d;touch-action:manipulation}
+button,input,textarea,select{font:inherit}button{color:inherit;border:1px solid transparent;border-radius:8px;background:rgba(255,255,255,.09);padding:8px 11px}button:active{background:rgba(255,255,255,.2)}button:focus-visible{outline:2px solid #8cc5ff}
+#desktop{position:absolute;inset:0 0 58px;background:radial-gradient(ellipse at 25% 40%,#25628a 0%,transparent 42%),radial-gradient(ellipse at 68% 45%,#265e88 0%,transparent 36%),linear-gradient(135deg,#091528,#102f50 52%,#101b32);overflow:hidden}
+.wallpaper-glow{position:absolute;width:68vw;height:68vw;max-width:900px;max-height:900px;border-radius:50%;filter:blur(80px);opacity:.26;background:#288bdb;left:18%;top:6%;pointer-events:none}
+#desktopIcons{position:absolute;left:10px;top:12px;display:grid;grid-auto-flow:row;grid-template-columns:80px;gap:7px}
+.desk-icon{display:flex;flex-direction:column;align-items:center;gap:5px;width:76px;min-height:75px;padding:6px 3px;background:transparent;border:1px solid transparent;text-align:center;font-size:12px;text-shadow:0 1px 3px #000}
+.desk-icon:active,.desk-icon:focus{background:#ffffff24;border-color:#ffffff50}
+.appicon{width:39px;height:39px;display:grid;place-items:center;font-size:26px;border-radius:10px;background:linear-gradient(145deg,#ffffff25,#ffffff08);box-shadow:inset 0 0 0 1px #ffffff25}
+#taskbar{position:absolute;z-index:10000;bottom:0;left:0;right:0;height:58px;background:rgba(16,24,38,.82);backdrop-filter:blur(24px);border-top:1px solid #ffffff20;display:flex;align-items:center;justify-content:center;padding:5px 10px;gap:6px}
+.task-group{display:flex;align-items:center;gap:5px}
+.task-btn{height:44px;min-width:42px;display:grid;place-items:center;font-size:23px;padding:4px 9px;background:transparent;border-radius:9px}
+.task-btn:hover,.task-btn.active{background:#ffffff17}.task-btn.active:after{content:"";position:absolute;bottom:2px;width:17px;height:3px;background:#74baff;border-radius:3px}
+#searchTask{font-size:14px;display:flex;gap:8px;align-items:center;border-radius:22px;padding:0 14px;height:38px;background:#ffffff12}
+#tray{position:absolute;right:10px;display:flex;align-items:center;gap:10px;font-size:12px;color:#eef5ff}
+#tray button{background:transparent;padding:7px}
+.window{position:absolute;z-index:10;left:clamp(8px,12vw,170px);top:clamp(10px,9vh,80px);width:min(720px,calc(100vw - 16px));height:min(500px,calc(100% - 20px));min-width:min(290px,calc(100vw - 16px));min-height:220px;background:rgba(24,31,44,.94);border:1px solid #ffffff35;border-radius:13px;box-shadow:0 22px 70px #0008;overflow:hidden;display:flex;flex-direction:column;backdrop-filter:blur(30px)}
+.window.maximized{left:5px!important;top:5px!important;width:calc(100vw - 10px)!important;height:calc(100% - 10px)!important}
+.titlebar{height:43px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:0 8px 0 13px;background:#ffffff08;border-bottom:1px solid #ffffff13;touch-action:none;user-select:none}
+.title-icon{font-size:18px}.title-name{font-size:13px;flex:1}.win-controls{display:flex;gap:4px}.win-controls button{width:34px;height:31px;padding:0;background:transparent;border-radius:6px}.win-controls button:last-child:hover{background:#e34a5c}
+.window-content{flex:1;min-height:0;overflow:auto;padding:16px}
+.window-content h2{font-size:21px;font-weight:600;margin:0 0 14px}.window-content h3{font-size:14px;font-weight:600;margin:12px 0 8px}
+#startMenu{position:absolute;z-index:9000;bottom:66px;left:50%;transform:translateX(-50%);width:min(570px,calc(100vw - 18px));max-height:min(680px,calc(100dvh - 80px));overflow:auto;background:rgba(23,32,48,.95);backdrop-filter:blur(35px);border:1px solid #ffffff2b;border-radius:17px;box-shadow:0 25px 75px #0008;padding:22px;display:none}
+#startMenu.show{display:block}.searchbox{width:100%;border-radius:8px;background:#ffffff12;border:1px solid #ffffff20;color:white;padding:11px 13px;outline:none}.start-heading{font-size:13px;font-weight:600;margin:19px 0 12px;display:flex;justify-content:space-between}.app-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.start-app{background:transparent;display:flex;flex-direction:column;align-items:center;gap:7px;padding:12px 3px;font-size:11px}.start-app .appicon{width:43px;height:43px}.recommended{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.recommended button{display:flex;align-items:center;gap:10px;text-align:left;font-size:12px;padding:10px}
+#startFooter{display:flex;justify-content:space-between;align-items:center;border-top:1px solid #ffffff17;margin:18px -22px -22px;padding:12px 22px;background:#ffffff06}
+.card{background:#ffffff0c;border:1px solid #ffffff14;border-radius:12px;padding:13px;margin-bottom:10px}.muted{color:var(--muted);font-size:12px;line-height:1.5}.tile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px}.tile{min-height:92px;text-align:left;display:flex;flex-direction:column;gap:10px;padding:13px;background:#ffffff0c;border:1px solid #ffffff13;border-radius:11px}.tile .big{font-size:25px}
+.filelist{display:flex;flex-direction:column;gap:4px}.file-row{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px}.file-row:hover{background:#ffffff10}.file-row span:nth-child(2){flex:1}.file-row small{color:var(--muted)}
+textarea.editor{width:100%;height:100%;min-height:230px;resize:none;border:0;outline:none;background:transparent;color:#fff;font-size:15px;line-height:1.6}
+.calc{max-width:350px;margin:auto}.calc-display{width:100%;height:65px;border:0;background:#ffffff0d;border-radius:9px;text-align:right;color:#fff;font-size:29px;padding:10px;margin-bottom:8px}.calc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.calc-grid button{height:52px;font-size:17px}.calc-grid .equal{background:#2879c7}
+.setting-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #ffffff12}.setting-row select,.setting-row input{max-width:150px;background:#ffffff12;border:1px solid #ffffff20;border-radius:7px;padding:7px;color:#fff}
+.paint-canvas{display:block;width:100%;height:calc(100% - 50px);min-height:210px;background:white;border-radius:8px;touch-action:none}.paint-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:8px}.paint-tools input{max-width:85px}
+.context-menu{position:absolute;z-index:8000;background:#202b3d;border:1px solid #ffffff2b;padding:6px;border-radius:9px;box-shadow:0 8px 30px #0008}
+#toast{position:absolute;z-index:20000;bottom:72px;left:50%;transform:translateX(-50%);background:#26364b;border:1px solid #ffffff30;border-radius:10px;padding:10px 15px;display:none;font-size:13px}
+@media(max-width:650px){#taskbar{justify-content:center}.task-group{gap:1px}.task-btn{min-width:37px;padding:3px 6px}#searchTask{width:39px;overflow:hidden;white-space:nowrap;padding:0 10px;font-size:0}#searchTask span{font-size:20px}#tray{display:none}.window{left:5px!important;top:5px!important;width:calc(100vw - 10px)!important;height:calc(100% - 10px)!important}.window.maximized{height:calc(100% - 10px)!important}.app-grid{grid-template-columns:repeat(4,1fr)}#startMenu{padding:16px}.window-content{padding:12px}}
+
+.resize-handle{position:absolute;z-index:50;touch-action:none;user-select:none}
+.resize-handle.n,.resize-handle.s{left:12px;right:12px;height:9px;cursor:ns-resize}
+.resize-handle.n{top:0}.resize-handle.s{bottom:0}
+.resize-handle.e,.resize-handle.w{top:12px;bottom:12px;width:9px;cursor:ew-resize}
+.resize-handle.e{right:0}.resize-handle.w{left:0}
+.resize-handle.ne,.resize-handle.nw,.resize-handle.se,.resize-handle.sw{width:17px;height:17px}
+.resize-handle.ne{right:0;top:0;cursor:nesw-resize}.resize-handle.nw{left:0;top:0;cursor:nwse-resize}
+.resize-handle.se{right:0;bottom:0;cursor:nwse-resize}.resize-handle.sw{left:0;bottom:0;cursor:nesw-resize}
+.window.maximized .resize-handle{display:none}
+
+/* Světlý režim – tmavý režim je výchozí. */
+body.light{--text:#172033;--muted:#5d687b;color:var(--text);background:#e8edf5}
+body.light #desktop{background:radial-gradient(ellipse at 25% 40%,#b8d8f4 0%,transparent 42%),radial-gradient(ellipse at 68% 45%,#d7e8f8 0%,transparent 36%),linear-gradient(135deg,#e8f1fb,#c8def3 52%,#edf2fa)}
+body.light .wallpaper-glow{opacity:.12}
+body.light #taskbar{background:rgba(244,248,255,.88);border-top-color:#ffffff}
+body.light #tray{color:#25324a}
+body.light #startMenu{background:rgba(247,250,255,.96);border-color:#b9c7d9;color:#172033}
+body.light .window{background:rgba(248,250,255,.97);border-color:#b7c4d6;color:#172033}
+body.light .titlebar{background:#e9eff8;border-bottom-color:#d6dfeb}
+body.light .win-controls button:hover,body.light .task-btn:hover,body.light .task-btn.active{background:#dce7f5}
+body.light .card,body.light .tile{background:#edf2f9;border-color:#d8e1ed}
+body.light .file-row:hover{background:#e1eaf6}
+body.light .searchbox,body.light .setting-row select,body.light .setting-row input{background:#fff;color:#172033;border-color:#c5d0df}
+body.light .calc-display{background:#edf2f9;color:#172033}
+body.light textarea.editor{color:#172033}
+body.light #startFooter{background:#edf2f9;border-top-color:#d8e1ed}
+body.light .context-menu{background:#f7faff;color:#172033;border-color:#c5d0df}
+body.light #toast{background:#f7faff;color:#172033;border-color:#c5d0df}
+body.light .desk-icon{text-shadow:0 1px 2px #ffffff}
+body.light .appicon{background:linear-gradient(145deg,#dbe7f5,#f7faff);box-shadow:inset 0 0 0 1px #c7d5e6}
+body.light .setting-row{border-bottom-color:#d8e1ed}
+@media(max-width:650px){.resize-handle.n,.resize-handle.s{height:15px}.resize-handle.e,.resize-handle.w{width:15px}.resize-handle.ne,.resize-handle.nw,.resize-handle.se,.resize-handle.sw{width:24px;height:24px}}
+
+
+</style>
+</head>
+<body>
+<div id="desktop"><div class="wallpaper-glow"></div>
+ <div id="desktopIcons">
+  <button class="desk-icon" data-app="explorer"><span class="appicon">📁</span><span>Soubory</span></button>
+  <button class="desk-icon" data-app="browser"><span class="appicon">🌐</span><span>Webový prohlížeč</span></button>
+  <button class="desk-icon" data-app="notes"><span class="appicon">📝</span><span>Poznámkový blok</span></button>
+  <button class="desk-icon" data-app="paint"><span class="appicon">🎨</span><span>Paint</span></button>
+  <button class="desk-icon" data-app="settings"><span class="appicon">⚙️</span><span>Nastavení</span></button>
+ </div>
+</div>
+<div id="startMenu">
+ <input class="searchbox" id="startSearch" placeholder="Hledat aplikace a nastavení…">
+ <div class="start-heading"><span>Připnuté aplikace</span><span class="muted">Všechny aplikace</span></div>
+ <div class="app-grid" id="startApps"></div>
+ <div class="start-heading"><span>Doporučené</span><span class="muted">Nedávné</span></div>
+ <div class="recommended"><button data-app="explorer">📁 <span>Soubory<br><small class="muted">Správce souborů</small></span></button><button data-app="notes">📝 <span>Poznámkový blok<br><small class="muted">Rychlé poznámky</small></span></button></div>
+ <div id="startFooter"><span>👤 Místní uživatel</span><button id="powerBtn">⏻ Napájení</button></div>
+</div>
+<div id="taskbar">
+ <div class="task-group"><button class="task-btn" id="startBtn" title="Start">🪟</button><button id="searchTask" class="task-btn"><span>🔎</span> Hledat</button>
+ <button class="task-btn" data-app="explorer" title="Soubory">📁</button><button class="task-btn" data-app="browser" title="Prohlížeč">🌐</button><button class="task-btn" data-app="notes" title="Poznámkový blok">📝</button><button class="task-btn" data-app="paint" title="Paint">🎨</button></div>
+ <div id="tray"><button id="wifiBtn" title="Síť">◉ Wi‑Fi</button><span>🔊</span><span id="clock">--:--<br>--.--.----</span><button data-app="settings" title="Nastavení">⚙️</button></div>
+</div>
+<div id="toast"></div>
+<script>
+(()=> {
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const apps={
+ explorer:{name:'Průzkumník souborů',icon:'📁',render:explorer},
+ browser:{name:'Webový prohlížeč',icon:'🌐',render:browser},
+ notes:{name:'Poznámkový blok',icon:'📝',render:notes},
+ paint:{name:'Paint',icon:'🎨',render:paint},
+ settings:{name:'Nastavení',icon:'⚙️',render:settings},
+ calc:{name:'Kalkulačka',icon:'🧮',render:calc},
+ about:{name:'O systému',icon:'💠',render:about},
+ taskmgr:{name:'Správce úloh',icon:'📊',render:taskManager},
+ games:{name:'Hry',icon:'🎮',render:gamesApp}
+};
+let z=20, winCount=0, activeWindows={}, notesText=localStorage.getItem('winpad-notes')||'', paintColor='#1466d3', paintSize=7, paintDown=false, paintLast=null;
+function toast(t){const el=$('#toast');el.textContent=t;el.style.display='block';clearTimeout(toast.t);toast.t=setTimeout(()=>el.style.display='none',2200)}
+function openApp(id){if(!apps[id])return;$('#startMenu').classList.remove('show');if(activeWindows[id]){const w=activeWindows[id];w.style.display='flex';w.style.zIndex=++z;return}
+ const def=apps[id], win=document.createElement('section');win.className='window';win.dataset.app=id;win.style.zIndex=++z;
+ win.innerHTML=`<div class="titlebar"><span class="title-icon">${def.icon}</span><span class="title-name">${def.name}</span><div class="win-controls"><button data-act="min" title="Minimalizovat">—</button><button data-act="max" title="Maximalizovat">□</button><button data-act="close" title="Zavřít">×</button></div></div><div class="window-content"></div>`;
+ $('#desktop').appendChild(win);activeWindows[id]=win;
+ const content=win.querySelector('.window-content');def.render(content,win);
+ // Osm dotykových/okrajových úchytů pro změnu velikosti okna.
+ ['n','s','e','w','ne','nw','se','sw'].forEach(dir=>{
+   const h=document.createElement('div');h.className='resize-handle '+dir;h.setAttribute('aria-label','Změnit velikost okna');win.appendChild(h);
+   let rs=null;
+   h.addEventListener('pointerdown',e=>{
+     if(win.classList.contains('maximized'))return;
+     e.preventDefault();e.stopPropagation();
+     const r=win.getBoundingClientRect();
+     rs={x:e.clientX,y:e.clientY,left:r.left,top:r.top,width:r.width,height:r.height};
+     h.setPointerCapture(e.pointerId);
+   });
+   h.addEventListener('pointermove',e=>{
+     if(!rs)return;e.preventDefault();
+     const dx=e.clientX-rs.x,dy=e.clientY-rs.y;
+     const minW=Math.min(290,window.innerWidth-16),minH=220;
+     let left=rs.left,top=rs.top,width=rs.width,height=rs.height;
+     if(dir.includes('e'))width=Math.max(minW,rs.width+dx);
+     if(dir.includes('s'))height=Math.max(minH,rs.height+dy);
+     if(dir.includes('w')){width=Math.max(minW,rs.width-dx);left=rs.left+(rs.width-width);}
+     if(dir.includes('n')){height=Math.max(minH,rs.height-dy);top=rs.top+(rs.height-height);}
+     width=Math.min(width,window.innerWidth-left);
+     height=Math.min(height,window.innerHeight-58-top);
+     win.style.left=Math.max(0,left)+'px';win.style.top=Math.max(0,top)+'px';
+     win.style.width=Math.max(minW,width)+'px';win.style.height=Math.max(minH,height)+'px';
+   });
+   const stop=()=>rs=null;h.addEventListener('pointerup',stop);h.addEventListener('pointercancel',stop);
+ });
+ win.addEventListener('pointerdown',()=>win.style.zIndex=++z);
+ const bar=win.querySelector('.titlebar');let drag=null;
+ bar.addEventListener('pointerdown',e=>{if(e.target.closest('button')||win.classList.contains('maximized'))return;drag={x:e.clientX,y:e.clientY,left:win.offsetLeft,top:win.offsetTop};bar.setPointerCapture(e.pointerId)});
+ bar.addEventListener('pointermove',e=>{if(!drag)return;win.style.left=Math.max(0,drag.left+e.clientX-drag.x)+'px';win.style.top=Math.max(0,drag.top+e.clientY-drag.y)+'px'});
+ bar.addEventListener('pointerup',()=>drag=null);bar.addEventListener('pointercancel',()=>drag=null);
+ win.querySelectorAll('[data-act]').forEach(b=>b.onclick=()=>{if(b.dataset.act==='close'){win.remove();delete activeWindows[id]}else if(b.dataset.act==='min'){win.style.display='none'}else{win.classList.toggle('maximized')}});
+ win.querySelector('.title-name').ondblclick=()=>win.classList.toggle('maximized');
+}
+function explorer(el){el.innerHTML=`<h2>📁 Rychlý přístup</h2><div class="tile-grid"><button class="tile" data-folder="Plocha"><span class="big">🖥️</span><b>Plocha</b><small class="muted">Soubory na ploše</small></button><button class="tile" data-folder="Dokumenty"><span class="big">📄</span><b>Dokumenty</b><small class="muted">Vaše dokumenty</small></button><button class="tile" data-folder="Obrázky"><span class="big">🖼️</span><b>Obrázky</b><small class="muted">Obrázky a kresby</small></button><button class="tile" data-folder="Stažené soubory"><span class="big">⬇️</span><b>Stažené soubory</b><small class="muted">Stažené položky</small></button></div><h3>Domov</h3><div class="card"><b>Vítej v Průzkumníku</b><p class="muted">Toto je ukázkový správce souborů. Nemá automatický přístup ke všem souborům iPadu. Skutečné soubory můžeš otevřít přes aplikaci Soubory v iPadOS.</p></div><div id="folderInfo" class="filelist"></div>`;
+ el.querySelectorAll('[data-folder]').forEach(b=>b.onclick=()=>{$('#folderInfo').innerHTML=`<div class="file-row">📂 <span>${b.dataset.folder}</span><small>Ukázková složka</small></div><p class="muted">Tato složka je pouze součástí simulace WinPad.</p>`;});
+}
+function browser(el){el.innerHTML=`<div style="display:flex;gap:7px;margin-bottom:14px"><input id="webAddress" class="searchbox" style="flex:1" value="https://www.wikipedia.org" aria-label="Webová adresa"><button id="webGo">Přejít ↗</button></div><div class="card"><h2>🌐 Webový prohlížeč</h2><p class="muted">Tato aplikace je jednoduché okno pro otevírání webových stránek. Stránky se otevřou v novém panelu Safari, protože skutečný vestavěný prohlížeč vyžaduje jiné oprávnění.</p><button id="wiki">Otevřít Wikipedii</button> <button id="searchWeb">Hledat na webu</button></div><p class="muted">Tip: zadej adresu webu a klepni na Přejít.</p>`;
+ const go=()=>{let v=$('#webAddress').value.trim();if(!v)return;if(!/^https?:\/\//i.test(v))v='https://'+v;window.open(v,'_blank','noopener');};$('#webGo').onclick=go;$('#webAddress').onkeydown=e=>{if(e.key==='Enter')go()};$('#wiki').onclick=()=>window.open('https://www.wikipedia.org','_blank','noopener');$('#searchWeb').onclick=()=>window.open('https://www.google.com/search?q='+encodeURIComponent($('#webAddress').value),'_blank','noopener');}
+function notes(el){el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><h2>📝 Poznámkový blok</h2><button id="noteClear">Vymazat</button></div><textarea class="editor" id="noteEditor" placeholder="Začni psát poznámku…"></textarea><p class="muted">Poznámky se automaticky ukládají v tomto prohlížeči.</p>`;const ta=$('#noteEditor');ta.value=notesText;ta.oninput=()=>{notesText=ta.value;try{localStorage.setItem('winpad-notes',notesText)}catch{}};$('#noteClear').onclick=()=>{if(confirm('Vymazat poznámku?')){ta.value='';notesText='';localStorage.removeItem('winpad-notes')}};}
+function paint(el){el.innerHTML=`<div class="paint-tools"><label>Barva <input type="color" id="paintColor" value="${paintColor}"></label><label>Velikost <input type="range" id="paintSize" min="1" max="35" value="${paintSize}"></label><button id="paintClear">Vymazat</button><button id="paintSave">Uložit PNG</button></div><canvas class="paint-canvas" id="paintCanvas" width="1000" height="650"></canvas>`;
+ const c=$('#paintCanvas'),ctx=c.getContext('2d');ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height);
+ $('#paintColor').oninput=e=>paintColor=e.target.value;$('#paintSize').oninput=e=>paintSize=+e.target.value;
+ const p=e=>{const r=c.getBoundingClientRect();return{x:(e.clientX-r.left)/r.width*c.width,y:(e.clientY-r.top)/r.height*c.height}};
+ c.onpointerdown=e=>{paintDown=true;paintLast=p(e);c.setPointerCapture(e.pointerId)};c.onpointermove=e=>{if(!paintDown)return;const q=p(e);ctx.strokeStyle=paintColor;ctx.lineWidth=paintSize;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(paintLast.x,paintLast.y);ctx.lineTo(q.x,q.y);ctx.stroke();paintLast=q};c.onpointerup=()=>paintDown=false;c.onpointercancel=()=>paintDown=false;
+ $('#paintClear').onclick=()=>{ctx.fillStyle='#fff';ctx.fillRect(0,0,c.width,c.height)};$('#paintSave').onclick=()=>{const a=document.createElement('a');a.download='winpad-kresba.png';a.href=c.toDataURL('image/png');a.click()};
+}
+function settings(el){el.innerHTML=`<h2>⚙️ Nastavení</h2>
+ <div class="card"><h3>Systém</h3><div class="setting-row"><span>Režim</span><span>Simulace Windows 11</span></div>
+ <div class="setting-row"><span>🌙 Tmavý režim</span><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="darkModeToggle" style="width:20px;height:20px;accent-color:#2879c7"><span id="modeLabel">Tmavý</span></label></div>
+ <div class="setting-row"><span>Vzhled plochy</span><select id="themeSelect"><option value="blue">Modrá plocha</option><option value="purple">Fialová plocha</option><option value="green">Zelená plocha</option></select></div>
+ <div class="setting-row"><span>Průhlednost</span><span>Efekt skla</span></div></div>
+ <div class="card"><h3>Přizpůsobení</h3><p class="muted">Vyber barvu plochy. Nastavení se uloží v tomto prohlížeči.</p><div style="display:flex;gap:8px;flex-wrap:wrap"><button data-wall="blue">🔵 Modrá</button><button data-wall="purple">🟣 Fialová</button><button data-wall="green">🟢 Zelená</button></div></div>
+ <div class="card"><h3>🎨 Více přizpůsobení</h3>
+ <div class="setting-row"><span>Barva prostředí</span><select id="accentSelect"><option value="blue">Modrá</option><option value="purple">Fialová</option><option value="green">Zelená</option><option value="pink">Růžová</option><option value="orange">Oranžová</option></select></div>
+ <div class="setting-row"><span>Velikost rozhraní</span><select id="uiScale"><option value="1">Normální</option><option value="1.08">Větší</option><option value="0.94">Menší</option></select></div>
+ <div class="setting-row"><span>Zaoblení oken</span><select id="roundness"><option value="16px">Zaoblené</option><option value="6px">Méně zaoblené</option><option value="0px">Hranaté</option></select></div>
+ <div class="setting-row"><span>Průhlednost hlavního panelu</span><select id="taskbarStyle"><option value="0.88">Skleněný</option><option value="0.98">Téměř neprůhledný</option><option value="1">Neprůhledný</option></select></div>
+ <p class="muted">Volby se uloží v tomto prohlížeči.</p></div>
+ <div class="card"><h3>🖼️ Vlastní tapeta</h3><p class="muted">Vyber obrázek ze svého zařízení. Obrázek zůstane uložený v tomto prohlížeči, pokud to jeho úložiště dovolí.</p><input id="wallpaperUpload" type="file" accept="image/*" style="max-width:100%"><button id="resetWallpaper">Obnovit výchozí tapetu</button></div>
+ <div class="card"><h3>Tipy</h3><p class="muted">Vyzkoušej Správce úloh, kde najdeš ukázkový přehled aplikací a využití systému.</p><button id="openTaskMgr">📊 Otevřít Správce úloh</button></div>
+ <div class="card"><h3>Informace</h3><p class="muted">WinPad 11 • webový projekt inspirovaný prostředím Windows. Nejde o produkt Microsoftu ani o skutečný operační systém.</p><button id="aboutBtn">O systému</button></div>`;
+ const wall=v=>{const d=$('#desktop');d.style.background=v==='purple'?'radial-gradient(ellipse at 25% 40%,#6948a4,transparent 42%),linear-gradient(135deg,#130d28,#32234e,#101b32)':v==='green'?'radial-gradient(ellipse at 25% 40%,#207e6b,transparent 42%),linear-gradient(135deg,#071f20,#124a43,#101b32)':'radial-gradient(ellipse at 25% 40%,#25628a,transparent 42%),radial-gradient(ellipse at 68% 45%,#265e88,transparent 36%),linear-gradient(135deg,#091528,#102f50 52%,#101b32)';try{localStorage.setItem('winpad-wall',v)}catch{}};
+ const savedWall=localStorage.getItem('winpad-wall')||'blue';$('#themeSelect').value=savedWall;
+ el.querySelectorAll('[data-wall]').forEach(b=>b.onclick=()=>{wall(b.dataset.wall);$('#themeSelect').value=b.dataset.wall});
+ $('#themeSelect').onchange=e=>wall(e.target.value);
+ const dark=$('#darkModeToggle');dark.checked=!document.body.classList.contains('light');$('#modeLabel').textContent=dark.checked?'Tmavý':'Světlý';
+ dark.onchange=()=>{document.body.classList.toggle('light',!dark.checked);try{localStorage.setItem('winpad-mode',dark.checked?'dark':'light')}catch{}$('#modeLabel').textContent=dark.checked?'Tmavý':'Světlý';toast(dark.checked?'Zapnut tmavý režim':'Zapnut světlý režim')};
+ const accents={blue:'#2879c7',purple:'#8b5cf6',green:'#16a085',pink:'#e84393',orange:'#e67e22'};
+ const applyAccent=v=>{document.documentElement.style.setProperty('--accent',accents[v]||accents.blue);try{localStorage.setItem('winpad-accent',v)}catch{}};
+ const accent=$('#accentSelect');accent.value=localStorage.getItem('winpad-accent')||'blue';applyAccent(accent.value);accent.onchange=()=>applyAccent(accent.value);
+ const scale=$('#uiScale');scale.value=localStorage.getItem('winpad-scale')||'1';document.documentElement.style.setProperty('--ui-scale',scale.value);scale.onchange=()=>{document.documentElement.style.setProperty('--ui-scale',scale.value);try{localStorage.setItem('winpad-scale',scale.value)}catch{};toast('Velikost rozhraní změněna')};
+ const round=$('#roundness');round.value=localStorage.getItem('winpad-round')||'16px';document.documentElement.style.setProperty('--window-radius',round.value);round.onchange=()=>{document.documentElement.style.setProperty('--window-radius',round.value);try{localStorage.setItem('winpad-round',round.value)}catch{}};
+ const tb=$('#taskbarStyle');tb.value=localStorage.getItem('winpad-taskbar')||'0.88';tb.onchange=()=>{document.documentElement.style.setProperty('--taskbar-alpha',tb.value);try{localStorage.setItem('winpad-taskbar',tb.value)}catch{}};
+ $('#wallpaperUpload').onchange=e=>{const file=e.target.files&&e.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{localStorage.setItem('winpad-custom-wallpaper',reader.result);$('#desktop').style.backgroundImage=`url("${reader.result}")`;$('#desktop').style.backgroundSize='cover';$('#desktop').style.backgroundPosition='center';toast('Vlastní tapeta nastavena')}catch{toast('Obrázek je příliš velký pro uložení. Zkus menší obrázek.')}};reader.readAsDataURL(file)};
+ $('#resetWallpaper').onclick=()=>{try{localStorage.removeItem('winpad-custom-wallpaper');localStorage.removeItem('winpad-wall')}catch{};$('#desktop').style.backgroundImage='';wall('blue');toast('Výchozí tapeta obnovena')};
+ $('#aboutBtn').onclick=()=>openApp('about');$('#openTaskMgr').onclick=()=>openApp('taskmgr');
+}
+function calc(el){el.innerHTML=`<div class="calc"><h2>🧮 Kalkulačka</h2><input class="calc-display" id="calcDisplay" value="0" readonly><div class="calc-grid">${['C','±','%','÷','7','8','9','×','4','5','6','−','1','2','3','+','0','.','⌫','='].map(x=>`<button data-key="${x}" class="${x==='='?'equal':''}">${x}</button>`).join('')}</div></div>`;let expr='',fresh=true;const d=$('#calcDisplay');el.querySelectorAll('[data-key]').forEach(b=>b.onclick=()=>{const k=b.dataset.key;if(k==='C'){expr='';d.value='0';fresh=true;return}if(k==='⌫'){expr=expr.slice(0,-1);d.value=expr||'0';return}if(k==='='){try{const safe=expr.replace(/×/g,'*').replace(/÷/g,'/').replace(/−/g,'-');if(!/^[0-9+\-*/%.() ]+$/.test(safe))throw 0;const result=Function('"use strict";return ('+safe+')')();if(!Number.isFinite(result))throw 0;expr=String(result);d.value=expr;fresh=true}catch{d.value='Chyba';expr='';fresh=true}return}if(k==='±'){if(expr.startsWith('-'))expr=expr.slice(1);else expr='-'+expr;d.value=expr||'0';return}if(fresh&&!'+−×÷'.includes(k)){expr='';fresh=false}expr+=k;d.value=expr;});}
+
+
+function gamesApp(el){
+ el.innerHTML=`<h2>🎮 Hry</h2><p class="muted">Malé hry přímo ve WinPadu – fungují bez internetu.</p>
+ <div class="tile-grid">
+ <button class="tile" id="snakeLaunch" style="text-align:left;padding:16px"><div style="font-size:32px">🐍</div><b>Had</b><div class="muted">Sbírej jídlo a nenaraz do sebe.</div></button>
+ <button class="tile" id="memoryLaunch" style="text-align:left;padding:16px"><div style="font-size:32px">🧠</div><b>Pexeso</b><div class="muted">Najdi všechny dvojice.</div></button>
+ <button class="tile" id="clickLaunch" style="text-align:left;padding:16px"><div style="font-size:32px">⚡</div><b>Rychlé klikání</b><div class="muted">Kolikrát klikneš za 10 sekund?</div></button>
+ </div><div id="gameStage" class="card"><h3>Vyber si hru</h3><p class="muted">Tip: Hada můžeš ovládat šipkami na klávesnici nebo tlačítky na obrazovce.</p></div>`;
+ const stage=$('#gameStage');
+ $('#snakeLaunch').onclick=()=>snakeGame(stage);
+ $('#memoryLaunch').onclick=()=>memoryGame(stage);
+ $('#clickLaunch').onclick=()=>clickGame(stage);
+}
+function snakeGame(stage){
+ stage.innerHTML=`<h3>🐍 Had</h3><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><b>Skóre: <span id="snakeScore">0</span></b><button id="snakeStart">▶ Spustit / restartovat</button><span class="muted">Šipky nebo tlačítka</span></div><canvas id="snakeCanvas" width="360" height="360" style="width:min(100%,360px);display:block;margin:12px auto;background:#101a2a;border-radius:10px;touch-action:none"></canvas><div style="display:grid;grid-template-columns:repeat(3,58px);justify-content:center;gap:5px"><span></span><button data-dir="up">⬆️</button><span></span><button data-dir="left">⬅️</button><button data-dir="down">⬇️</button><button data-dir="right">➡️</button></div><p id="snakeMsg" class="muted">Stiskni Spustit. Nasbírej co nejvíc jídla!</p>`;
+ const canvas=$('#snakeCanvas'),ctx=canvas.getContext('2d'),cell=18,grid=20;let snake,food,dir,next,score,timer,alive=false;
+ const draw=()=>{ctx.fillStyle='#101a2a';ctx.fillRect(0,0,360,360);ctx.fillStyle='#ffb84d';ctx.fillRect(food.x*cell+2,food.y*cell+2,cell-4,cell-4);snake.forEach((s,i)=>{ctx.fillStyle=i?'#55d6a7':'#9bffb0';ctx.fillRect(s.x*cell+1,s.y*cell+1,cell-2,cell-2)});};
+ const end=()=>{alive=false;clearInterval(timer);$('#snakeMsg').textContent='Konec hry! Skóre: '+score+'. Stiskni restart a zkus to znovu.'};
+ const tick=()=>{dir=next;const h={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(h.x<0||h.y<0||h.x>=grid||h.y>=grid||snake.some((s,i)=>i<snake.length-1&&s.x===h.x&&s.y===h.y)){end();return}snake.unshift(h);if(h.x===food.x&&h.y===food.y){score++;$('#snakeScore').textContent=score;do{food={x:Math.floor(Math.random()*grid),y:Math.floor(Math.random()*grid)}}while(snake.some(s=>s.x===food.x&&s.y===food.y))}else snake.pop();draw()};
+ const start=()=>{clearInterval(timer);snake=[{x:10,y:10},{x:9,y:10},{x:8,y:10}];food={x:15,y:10};dir=next={x:1,y:0};score=0;alive=true;$('#snakeScore').textContent='0';$('#snakeMsg').textContent='Hodně štěstí!';draw();timer=setInterval(tick,125)};
+ const change=d=>{const map={up:{x:0,y:-1},down:{x:0,y:1},left:{x:-1,y:0},right:{x:1,y:0}};const n=map[d];if(n&&!(n.x===-dir.x&&n.y===-dir.y))next=n};
+ $('#snakeStart').onclick=start;stage.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>change(b.dataset.dir));
+ const key=e=>{const m={ArrowUp:'up',ArrowDown:'down',ArrowLeft:'left',ArrowRight:'right'};if(m[e.key]&&stage.isConnected){e.preventDefault();change(m[e.key])}};window.addEventListener('keydown',key);start();
+}
+function memoryGame(stage){
+ const symbols=['🍎','🚀','🐸','⭐','🎧','🍕','🐱','⚽'];let cards=[...symbols,...symbols].sort(()=>Math.random()-.5),open=[],found=[],moves=0,locked=false;
+ stage.innerHTML=`<h3>🧠 Pexeso</h3><p>Počet tahů: <b id="memMoves">0</b></p><div id="memoryBoard" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px"></div><button id="memRestart">🔄 Nová hra</button><p id="memMsg" class="muted">Najdi všechny dvojice.</p>`;
+ const board=$('#memoryBoard');
+ const render=()=>{board.innerHTML='';cards.forEach((s,i)=>{const b=document.createElement('button');b.style.cssText='height:58px;font-size:25px;border-radius:10px';b.textContent=found.includes(i)||open.includes(i)?s:'❔';b.disabled=found.includes(i)||open.includes(i)||locked;b.onclick=()=>flip(i);board.appendChild(b)})};
+ const flip=i=>{if(locked||found.includes(i)||open.includes(i))return;open.push(i);render();if(open.length===2){moves++;$('#memMoves').textContent=moves;if(cards[open[0]]===cards[open[1]]){found.push(...open);open=[];render();if(found.length===cards.length)$('#memMsg').textContent='🎉 Výborně! Našel jsi všechny dvojice.'}else{locked=true;setTimeout(()=>{open=[];locked=false;render()},650)}}};
+ const restart=()=>{cards=[...symbols,...symbols].sort(()=>Math.random()-.5);open=[];found=[];moves=0;locked=false;$('#memMoves').textContent='0';$('#memMsg').textContent='Najdi všechny dvojice.';render()};$('#memRestart').onclick=restart;render();
+}
+function clickGame(stage){
+ stage.innerHTML=`<h3>⚡ Rychlé klikání</h3><p>Klikni co nejvíckrát za 10 sekund.</p><div style="font-size:36px;margin:12px 0">⏱️ <span id="clickTime">10</span>s</div><div style="font-size:22px">Kliknutí: <b id="clickScore">0</b></div><button id="clickGo">▶ Začít</button><button id="clickTap" disabled style="min-width:150px;min-height:72px;font-size:22px">KLIK!</button><p id="clickMsg" class="muted">Připrav se!</p>`;
+ let count=0,left=10,active=false,interval;const tap=$('#clickTap'),go=$('#clickGo');
+ tap.onclick=()=>{if(active){count++;$('#clickScore').textContent=count}};
+ go.onclick=()=>{clearInterval(interval);count=0;left=10;active=true;tap.disabled=false;go.disabled=true;$('#clickScore').textContent='0';$('#clickTime').textContent='10';$('#clickMsg').textContent='Teď klikej!';interval=setInterval(()=>{left--;$('#clickTime').textContent=left;if(left<=0){clearInterval(interval);active=false;tap.disabled=true;go.disabled=false;$('#clickMsg').textContent='Hotovo! Tvoje skóre: '+count+' kliknutí.'}},1000)};
+}
+
+function taskManager(el){const refresh=()=>{const running=Object.entries(activeWindows).filter(([id,w])=>w&&w.isConnected&&w.style.display!=='none');const rows=running.map(([id,w])=>`<tr><td>${apps[id]?.icon||'📦'} ${apps[id]?.name||id}</td><td>${(Math.random()*3+0.2).toFixed(1)} %</td><td>${Math.round(Math.random()*160+30)} MB</td><td><button data-stop="${id}">Ukončit</button></td></tr>`).join('');el.innerHTML=`<h2>📊 Správce úloh</h2><div class="tile-grid"><div class="card"><div class="muted">Procesor</div><div style="font-size:27px;font-weight:650">${Math.round(8+Math.random()*24)} %</div><div class="muted">Ukázková hodnota</div></div><div class="card"><div class="muted">Paměť</div><div style="font-size:27px;font-weight:650">${(2.1+Math.random()*1.2).toFixed(1)} GB</div><div class="muted">Simulované využití</div></div><div class="card"><div class="muted">Aplikace</div><div style="font-size:27px;font-weight:650">${running.length}</div><div class="muted">Otevřená okna</div></div></div><h3>Spuštěné aplikace</h3><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="text-align:left"><th style="padding:9px">Název</th><th>Procesor</th><th>Paměť</th><th>Akce</th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="padding:10px">Žádná další okna nejsou otevřená.</td></tr>'}</tbody></table></div><p class="muted">Údaje jsou pouze ilustrační – aplikace nemá přístup ke skutečným systémovým statistikám iPadu.</p><button id="refreshTasks">↻ Obnovit přehled</button>`;el.querySelectorAll('[data-stop]').forEach(b=>b.onclick=()=>{const id=b.dataset.stop;if(id==='taskmgr'){toast('Správce úloh nemůže ukončit sám sebe.');return}const w=activeWindows[id];if(w){w.remove();delete activeWindows[id]}refresh()});$('#refreshTasks').onclick=refresh};refresh();}
+
+function about(el){el.innerHTML=`<div style="text-align:center;padding:18px"><div style="font-size:62px">💠</div><h2>WinPad 11</h2><p>Verze 1.0 · Demo</p><div class="card" style="text-align:left"><b>Co to je?</b><p class="muted">Vlastní webová simulace plochy ve stylu Windows 11 pro iPad. Běží v prohlížeči a nemění iPadOS.</p><b>Co funguje?</b><p class="muted">Nabídka Start, okna aplikací, poznámky, jednoduchá kreslicí plocha, kalkulačka, nastavení a ukázkový průzkumník souborů.</p></div><p class="muted">Windows je ochranná známka společnosti Microsoft. WinPad není oficiální produkt Microsoftu.</p></div>`}
+function updateClock(){const d=new Date();$('#clock').innerHTML=d.toLocaleTimeString('cs-CZ',{hour:'2-digit',minute:'2-digit'})+'<br>'+d.toLocaleDateString('cs-CZ',{day:'2-digit',month:'2-digit',year:'numeric'})}
+function toggleStart(){$('#startMenu').classList.toggle('show');if($('#startMenu').classList.contains('show'))$('#startSearch').focus()}
+$('#startBtn').onclick=toggleStart;$('#searchTask').onclick=()=>{toggleStart();$('#startSearch').focus()};$('#powerBtn').onclick=()=>toast('Toto je simulace — iPad se nevypne.');$('#wifiBtn').onclick=()=>toast('Síť spravuje nastavení iPadOS.');
+$$('[data-app]').forEach(b=>b.addEventListener('click',()=>openApp(b.dataset.app)));
+Object.entries(apps).forEach(([id,a])=>{const b=document.createElement('button');b.className='start-app';b.dataset.app=id;b.innerHTML=`<span class="appicon">${a.icon}</span><span>${a.name}</span>`;$('#startApps').appendChild(b);b.onclick=()=>openApp(id)});
+$('#startSearch').oninput=e=>{$$('.start-app').forEach(b=>b.style.display=b.textContent.toLowerCase().includes(e.target.value.toLowerCase())?'flex':'none')};
+document.addEventListener('pointerdown',e=>{if(!e.target.closest('#startMenu')&&!e.target.closest('#startBtn')&&!e.target.closest('#searchTask'))$('#startMenu').classList.remove('show')});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('#startMenu').classList.remove('show');if(e.metaKey&&e.key.toLowerCase()==='e'){e.preventDefault();openApp('explorer')}});
+updateClock();setInterval(updateClock,15000);
+try{if(localStorage.getItem('winpad-mode')==='light')document.body.classList.add('light');
+const accentsBoot={blue:'#2879c7',purple:'#8b5cf6',green:'#16a085',pink:'#e84393',orange:'#e67e22'};document.documentElement.style.setProperty('--accent',accentsBoot[localStorage.getItem('winpad-accent')||'blue']||accentsBoot.blue);document.documentElement.style.setProperty('--ui-scale',localStorage.getItem('winpad-scale')||'1');document.documentElement.style.setProperty('--window-radius',localStorage.getItem('winpad-round')||'16px');document.documentElement.style.setProperty('--taskbar-alpha',localStorage.getItem('winpad-taskbar')||'.88');const customBg=localStorage.getItem('winpad-custom-wallpaper');if(customBg){$('#desktop').style.backgroundImage=`url("${customBg}")`;$('#desktop').style.backgroundSize='cover';$('#desktop').style.backgroundPosition='center'}const savedWall=localStorage.getItem('winpad-wall');if(savedWall){const d=$('#desktop');if(savedWall==='purple')d.style.background='radial-gradient(ellipse at 25% 40%,#6948a4,transparent 42%),linear-gradient(135deg,#130d28,#32234e,#101b32)';else if(savedWall==='green')d.style.background='radial-gradient(ellipse at 25% 40%,#207e6b,transparent 42%),linear-gradient(135deg,#071f20,#124a43,#101b32)';}}catch{}
+})();
+</script>
+</body>
+</html>
